@@ -1,12 +1,152 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PhoneHub</title>
+
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#f4f4f4;
+margin:0;
+padding:20px;
+}
+
+h1{
+text-align:center;
+}
+
+.box{
+background:white;
+padding:15px;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:5px 0;
+box-sizing:border-box;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:8px;
+}
+
+.phone{
+background:white;
+padding:15px;
+margin-top:10px;
+border-radius:10px;
+}
+</style>
 </head>
+
 <body>
-<h1>PhoneHub работает 🚀</h1>
-<p>Сайт создан.</p>
+
+<h1>PhoneHub 📱</h1>
+
+<div class="box">
+
+<input id="brand" placeholder="Бренд">
+<input id="model" placeholder="Модель">
+<input id="ram" placeholder="ОЗУ">
+<input id="storage" placeholder="Память">
+<input id="battery" placeholder="Аккумулятор">
+
+<button onclick="addPhone()">
+Добавить телефон
+</button>
+
+</div>
+
+<div id="phones"></div>
+
+<script>
+
+let phones =
+JSON.parse(localStorage.getItem("phones") || "[]");
+
+function save(){
+localStorage.setItem(
+"phones",
+JSON.stringify(phones)
+);
+}
+
+function render(){
+
+let html="";
+
+phones.forEach((p,index)=>{
+
+html += `
+<div class="phone">
+<h3>${p.brand} ${p.model}</h3>
+<p>ОЗУ: ${p.ram}</p>
+<p>Память: ${p.storage}</p>
+<p>Аккумулятор: ${p.battery}</p>
+
+<button onclick="removePhone(${index})">
+Удалить
+</button>
+
+</div>
+`;
+
+});
+
+document.getElementById("phones").innerHTML=html;
+}
+
+function addPhone(){
+
+phones.push({
+
+brand:
+document.getElementById("brand").value,
+
+model:
+document.getElementById("model").value,
+
+ram:
+document.getElementById("ram").value,
+
+storage:
+document.getElementById("storage").value,
+
+battery:
+document.getElementById("battery").value
+
+});
+
+save();
+render();
+
+document.querySelectorAll("input")
+.forEach(x=>x.value="");
+
+}
+
+function removePhone(i){
+
+phones.splice(i,1);
+
+save();
+render();
+
+}
+
+render();
+
+</script>
+
 </body>
 </html>
