@@ -2,13 +2,13 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PhoneHub</title>
 
 <style>
 body{
 font-family:Arial,sans-serif;
-background:#f4f4f4;
+background:#f2f2f2;
 margin:0;
 padding:20px;
 }
@@ -17,10 +17,10 @@ h1{
 text-align:center;
 }
 
-.box{
+.form,.search{
 background:white;
 padding:15px;
-border-radius:10px;
+border-radius:12px;
 margin-bottom:20px;
 }
 
@@ -29,41 +29,56 @@ width:100%;
 padding:10px;
 margin:5px 0;
 box-sizing:border-box;
+border:1px solid #ccc;
+border-radius:8px;
 }
 
 button{
 width:100%;
 padding:12px;
-background:#2563eb;
-color:white;
 border:none;
 border-radius:8px;
+background:#2563eb;
+color:white;
+font-size:16px;
+cursor:pointer;
+margin-top:5px;
 }
 
 .phone{
 background:white;
 padding:15px;
+border-radius:12px;
+margin-bottom:10px;
+}
+
+.delete{
+background:#dc2626;
 margin-top:10px;
-border-radius:10px;
 }
 </style>
-</head>
 
+</head>
 <body>
 
-<h1>PhoneHub 📱</h1>
+<h1>📱 PhoneHub</h1>
 
-<div class="box">
+<div class="search">
+<input id="search" placeholder="Поиск телефона..." onkeyup="renderPhones()">
+</div>
+
+<div class="form">
 
 <input id="brand" placeholder="Бренд">
 <input id="model" placeholder="Модель">
+<input id="cpu" placeholder="Процессор">
+<input id="display" placeholder="Экран">
 <input id="ram" placeholder="ОЗУ">
 <input id="storage" placeholder="Память">
+<input id="camera" placeholder="Камера">
 <input id="battery" placeholder="Аккумулятор">
 
-<button onclick="addPhone()">
-Добавить телефон
-</button>
+<button onclick="addPhone()">Добавить телефон</button>
 
 </div>
 
@@ -74,77 +89,93 @@ border-radius:10px;
 let phones =
 JSON.parse(localStorage.getItem("phones") || "[]");
 
-function save(){
+function savePhones(){
 localStorage.setItem(
 "phones",
 JSON.stringify(phones)
 );
 }
 
-function render(){
+function addPhone(){
 
-let html="";
+const phone = {
 
-phones.forEach((p,index)=>{
+brand: document.getElementById("brand").value,
+model: document.getElementById("model").value,
+cpu: document.getElementById("cpu").value,
+display: document.getElementById("display").value,
+ram: document.getElementById("ram").value,
+storage: document.getElementById("storage").value,
+camera: document.getElementById("camera").value,
+battery: document.getElementById("battery").value
+
+};
+
+phones.push(phone);
+
+savePhones();
+renderPhones();
+
+document.querySelectorAll(".form input")
+.forEach(input => input.value="");
+
+}
+
+function removePhone(index){
+
+phones.splice(index,1);
+
+savePhones();
+renderPhones();
+
+}
+
+function renderPhones(){
+
+const search =
+document.getElementById("search")
+.value
+.toLowerCase();
+
+let html = "";
+
+phones.forEach((phone,index)=>{
+
+const text =
+(phone.brand + " " + phone.model)
+.toLowerCase();
+
+if(text.includes(search)){
 
 html += `
 <div class="phone">
-<h3>${p.brand} ${p.model}</h3>
-<p>ОЗУ: ${p.ram}</p>
-<p>Память: ${p.storage}</p>
-<p>Аккумулятор: ${p.battery}</p>
 
-<button onclick="removePhone(${index})">
+<h2>${phone.brand} ${phone.model}</h2>
+
+<p><b>Процессор:</b> ${phone.cpu}</p>
+<p><b>Экран:</b> ${phone.display}</p>
+<p><b>ОЗУ:</b> ${phone.ram}</p>
+<p><b>Память:</b> ${phone.storage}</p>
+<p><b>Камера:</b> ${phone.camera}</p>
+<p><b>Аккумулятор:</b> ${phone.battery}</p>
+
+<button class="delete"
+onclick="removePhone(${index})">
 Удалить
 </button>
 
 </div>
 `;
 
-});
-
-document.getElementById("phones").innerHTML=html;
 }
-
-function addPhone(){
-
-phones.push({
-
-brand:
-document.getElementById("brand").value,
-
-model:
-document.getElementById("model").value,
-
-ram:
-document.getElementById("ram").value,
-
-storage:
-document.getElementById("storage").value,
-
-battery:
-document.getElementById("battery").value
 
 });
 
-save();
-render();
-
-document.querySelectorAll("input")
-.forEach(x=>x.value="");
+document.getElementById("phones").innerHTML = html;
 
 }
 
-function removePhone(i){
-
-phones.splice(i,1);
-
-save();
-render();
-
-}
-
-render();
+renderPhones();
 
 </script>
 
